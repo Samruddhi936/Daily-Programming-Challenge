@@ -1,0 +1,88 @@
+*Day 23 of 30* 🗓️
+
+*Problem* : Sliding Window Maximum
+You are given an array of integers arr and a positive integer k. Your task is to find the maximum element in each sliding window of size k. The window slides from left to right, one element at a time, and you need to return the maximum element for each of these windows.
+
+*Input* :
+* An integer array arr of size n, where 1≤n≤105
+* An integer k, where 1≤k≤n
+* Input: arr = [1, 3, -1, -3, 5, 3, 6, 7], k = 3
+
+*Output* :
+An array of size n−k+1 containing the maximum element from each sliding window.
+Output: [3, 3, 5, 5, 6, 7]
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Deque structure
+typedef struct {
+    int *data;
+    int front, rear;
+} Deque;
+
+Deque* createDeque(int n) {
+    Deque *dq = (Deque*)malloc(sizeof(Deque));
+    dq->data = (int*)malloc(n * sizeof(int));
+    dq->front = dq->rear = -1;
+    return dq;
+}
+
+int isEmpty(Deque *dq) {
+    return dq->front == -1;
+}
+
+void pushBack(Deque *dq, int x) {
+    dq->data[++dq->rear] = x;
+    if (dq->front == -1) dq->front = 0;
+}
+
+void popBack(Deque *dq) {
+    dq->rear--;
+    if (dq->rear < dq->front) dq->front = dq->rear = -1;
+}
+
+void popFront(Deque *dq) {
+    dq->front++;
+    if (dq->front > dq->rear) dq->front = dq->rear = -1;
+}
+
+int front(Deque *dq) {
+    return dq->data[dq->front];
+}
+
+int back(Deque *dq) {
+    return dq->data[dq->rear];
+}
+
+void slidingWindowMaximum(int arr[], int n, int k) {
+    Deque *dq = createDeque(n);
+    
+    for (int i = 0; i < n; i++) {
+        // Remove elements out of this window
+        if (!isEmpty(dq) && front(dq) <= i - k)
+            popFront(dq);
+
+        // Remove smaller elements
+        while (!isEmpty(dq) && arr[back(dq)] <= arr[i])
+            popBack(dq);
+
+        // Add current index
+        pushBack(dq, i);
+
+        // Print max for window (from k-1 index onwards)
+        if (i >= k - 1)
+            printf("%d ", arr[front(dq)]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {1, 3, -1, -3, 5, 3, 6, 7};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    int k = 3;
+
+    slidingWindowMaximum(arr, n, k); // Expected output: 3 3 5 5 6 7
+    return 0;
+}
