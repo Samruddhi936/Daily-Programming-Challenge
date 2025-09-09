@@ -1,0 +1,101 @@
+*Day 26 of 30* 🗓️
+
+*Problem* : Detect a Cycle in an Undirected Graph
+You are given an undirected graph represented by an adjacency list. Your task is to determine if the graph contains any cycle.
+A cycle is formed if you can traverse through a sequence of edges that starts and ends at the same vertex, with at least one edge in between.
+
+*Input* :
+* An integer V representing the number of vertices in the graph.
+* A list of edges, where each edge connects two vertices of the graph.
+* Input: V = 5, Edges = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]]
+
+*Output* :
+Return true if the graph contains a cycle, otherwise return false.
+Output: true
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// Adjacency list node
+typedef struct Node {
+    int vertex;
+    struct Node* next;
+} Node;
+
+// Function to create a new node
+Node* createNode(int v) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Add edge to adjacency list (undirected graph)
+void addEdge(Node* adj[], int u, int v) {
+    Node* newNode = createNode(v);
+    newNode->next = adj[u];
+    adj[u] = newNode;
+
+    newNode = createNode(u);
+    newNode->next = adj[v];
+    adj[v] = newNode;
+}
+
+// DFS function to detect cycle
+bool dfs(Node* adj[], int visited[], int v, int parent) {
+    visited[v] = 1;
+
+    Node* temp = adj[v];
+    while (temp != NULL) {
+        int neigh = temp->vertex;
+
+        if (!visited[neigh]) {
+            if (dfs(adj, visited, neigh, v))
+                return true;
+        } else if (neigh != parent) {
+            // If visited and not parent → cycle exists
+            return true;
+        }
+
+        temp = temp->next;
+    }
+
+    return false;
+}
+
+// Function to check if graph has a cycle
+bool hasCycle(Node* adj[], int V) {
+    int visited[V];
+    for (int i = 0; i < V; i++) visited[i] = 0;
+
+    for (int i = 0; i < V; i++) {
+        if (!visited[i]) {
+            if (dfs(adj, visited, i, -1))
+                return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    int V = 5;
+    Node* adj[V];
+    for (int i = 0; i < V; i++) adj[i] = NULL;
+
+    int edges[][2] = {{0,1}, {1,2}, {2,3}, {3,4}, {4,0}};
+    int E = sizeof(edges) / sizeof(edges[0]);
+
+    for (int i = 0; i < E; i++) {
+        addEdge(adj, edges[i][0], edges[i][1]);
+    }
+
+    if (hasCycle(adj, V))
+        printf("true\n");
+    else
+        printf("false\n");
+
+    return 0;
+}
