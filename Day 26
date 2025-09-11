@@ -1,4 +1,4 @@
-*Day 26 of 30* 🗓️
+/*Day 26 of 30* 🗓️
 
 *Problem* : Detect a Cycle in an Undirected Graph
 You are given an undirected graph represented by an adjacency list. Your task is to determine if the graph contains any cycle.
@@ -12,7 +12,7 @@ A cycle is formed if you can traverse through a sequence of edges that starts an
 *Output* :
 Return true if the graph contains a cycle, otherwise return false.
 Output: true
-
+*/
 
 
 #include <stdio.h>
